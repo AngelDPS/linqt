@@ -198,6 +198,15 @@ tbmodel::createHoppingSpinCurrents_list(const int dir, const double theta, const
 
 
 hopping_list 
+tbmodel::createHoppingSpinProjector_list(const int s0, const double theta, const double phi)
+{
+	//CREATE A SPIN PROJECTOR MATRIX
+        auto Su = this->createSpinProjectorMatrix(s0, theta, phi);
+	return this->createHoppingDensity_list(Su);
+};
+
+
+hopping_list 
 tbmodel::createHoppingSpinDensity_list(const std::string op )
 {
 	char direction = oputil::spin_direction(op);
@@ -292,6 +301,40 @@ tbmodel::createHoppingSpinCurrents_list(const int dir, const char sdir)
 };
 
 
+hopping_list
+tbmodel::createHoppingSpinProjector_list(const std::string op)
+{
+	char direction = oputil::spin_orientation(op);
+	int s0 = 1; // Assume is the +1 spin
+	switch(direction)
+	  {
+	  case '+':
+	    s0 = +1;
+	    break;
+	  case '-':
+	    s0 = -1;
+	    break;
+	  }
+
+	direction = oputil::spin_direction(op);
+	switch(direction)
+	  {
+	  case 'X':
+	    return this->tbmodel::createHoppingSpinProjector_list(s0,0.5*M_PI,0.0*M_PI);
+	    break;
+	  case 'Y':
+	    return this->tbmodel::createHoppingSpinProjector_list(s0,0.5*M_PI,0.5*M_PI);
+	    break;
+	  case 'Z':
+	    return this->tbmodel::createHoppingSpinProjector_list(s0,0.0*M_PI,0.0*M_PI);
+	    break;
+	  default:
+	    std::cout<<"Incorrect spin requested in createHoppingSpinProjector_list: "<<direction<<std::endl;
+	    assert(false); 
+	  }
+};
+
+
 hopping_list tbmodel::WannierOperator(std::string op_id )
 {
 	if ( oputil::is_velocity(op_id)  )
@@ -312,6 +355,11 @@ hopping_list tbmodel::WannierOperator(std::string op_id )
 	if ( oputil::is_torque(op_id) )
 	{
 		return this->createHoppingTorqueDensity_list(op_id);
+	}
+
+	if ( oputil::is_spin_projector(op_id) )
+	{
+		return this->createHoppingSpinProjector_list(op_id);
 	}
 	std::cout<<"Incorrect wannier operator requested "<<op_id<<std::endl;
 	assert(false);		
@@ -355,6 +403,48 @@ oputil::op_matrix tbmodel::createSpinMatrix(const double theta, const double phi
 	}
 	return Su;
 }
+
+
+oputil::op_matrix tbmodel::createSpinProjectorMatrix(const int s0, const double theta, const double phi)
+{
+	const std::complex<double> I(0,1);
+	const int tot_dim  =  this->orbPos_list.size();
+	const int num_spin = 2;
+	const int orb_dim  =  tot_dim/num_spin;
+
+	oputil::op_matrix Su ( tot_dim ) ;
+	for(int io = 0 ; io < orb_dim ; io++)
+	for(int si = 0 ; si < num_spin; si++)
+	for(int sj = 0 ; sj < num_spin; sj++)
+	{
+		const int i = si*orb_dim + io;
+		const int j = sj*orb_dim + io;
+		auto sz  = 1.0-2.0*si;
+
+		if( si == sj )
+		{
+		        Su(i,j).real( 0.5 * (1 + s0 * sz * cos(theta) ) ); 
+			if( (theta == 0.0*M_PI) && (sz * s0 == -1.0) )  Su(i,j) = 0.0 ;
+		}
+		else
+		{
+			Su(i,j) = s0 * 0.5 * sin(theta) * exp(-I*phi*sz );
+			if( phi == 0.0 )
+			{
+				Su(i,j).real( s0 * 0.5 * sin(theta) );
+				Su(i,j).imag( 0.0 );
+			}
+			if( phi == 0.5*M_PI )
+			{
+				Su(i,j).real(0.0);
+				Su(i,j).imag(-s0 * sz * 0.5 * sin(theta) );
+			}
+		}
+	}
+	return Su;
+}
+
+
 
 oputil::op_matrix tbmodel::createTorqueMatrix(const double theta, const double phi)
 {

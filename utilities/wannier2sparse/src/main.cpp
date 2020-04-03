@@ -41,7 +41,7 @@ int main( int argc, char* argv[]){
 
 	tbmodel model;
 	model.readOrbitalPositions(args.label+".xyz"); 	std::cout<<" finished"<<std::endl;
-	model.readUnitCell(args.label+".uc"); 			std::cout<<" finished"<<std::endl;
+	model.readUnitCell(args.label+".uc"); 		std::cout<<" finished"<<std::endl;
 	model.readWannierModel(args.label+"_hr.dat"); 	std::cout<<" finished"<<std::endl;
 	model.readStaticDisorder(args.label+".stdis"); 	std::cout<<" finished"<<std::endl;
 

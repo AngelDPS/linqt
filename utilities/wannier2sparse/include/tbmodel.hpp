@@ -168,6 +168,17 @@ class tbmodel
     hopping_list createHoppingSpinCurrents_list(const int dir, const double theta, const double phi );
 
 
+         /**
+	 * Construct the spin projector operator in the direction u_s = ( sin(theta)*cos(phi),sin(theta)*sin(phi), cos(theta); 
+	 * In this context,  OP  =  PSu_s, the spin direction.
+	 *
+	 * @return projector_hopping_list Returns the projector operator in the format of a hopping list.
+         * @param[in]  S. orientation of the spin.
+	 * @param[in]  Theta. angle defining the altitute direction in which you want the spin.
+	 * @param[in]  Phi. angle defining the azimuth
+	 */
+    hopping_list createHoppingSpinProjector_list(const int s0, const double theta, const double phi);
+
 	//DERIVED FUNCTIONS
     hopping_list createHoppingCurrents_list(const std::string op );
     
@@ -178,6 +189,8 @@ class tbmodel
     hopping_list createHoppingSpinCurrents_list(string op);  
    
     hopping_list createHoppingSpinCurrents_list(const int dir, const char sdir);
+
+    hopping_list createHoppingSpinProjector_list(const std::string op);
 
     hopping_list WannierOperator(std::string op_id );
 
@@ -207,6 +220,8 @@ class tbmodel
 	oputil::op_matrix createSpinMatrix(const double theta, const double phi);
 
 	oputil::op_matrix createTorqueMatrix(const double theta, const double phi);
+
+        oputil::op_matrix createSpinProjectorMatrix(const int s0, const double theta, const double phi);
 
 	public:
     int num_orbs;
