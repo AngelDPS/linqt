@@ -26,10 +26,14 @@ int main(int argc, char *argv[])
   SparseMatrixType Sz;
   Sz.SetID("Sz");
   Sz.setDimensions(2, 2);
-  vector<int> Sz_colrowidx = {0, 1};
-  vector<complex<double>> Sz_data = {-1.0*0.1, 1.0*0.1};
-  Sz.ConvertFromCOO(Sz_colrowidx, Sz_colrowidx, Sz_data);
-  std::array<double, 2> spectral_bounds = {-1.0*0.1, 1.0*0.1};
+  std::array<double, 2> spectral_bounds;
+  {
+    const double Jex = 0.1;
+    vector<int> Sz_colrowidx = {0, 1};
+    vector<complex<double>> Sz_data = {-1.0*Jex, 1.0*Jex};
+    Sz.ConvertFromCOO(Sz_colrowidx, Sz_colrowidx, Sz_data);
+    spectral_bounds = {-1.0*0.1, 1.0*0.1};
+  }
 
   //CONFIGURE THE CHEBYSHEV MOMENTS
   chebMoms.SystemLabel("Sz");
