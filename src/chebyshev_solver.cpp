@@ -256,7 +256,7 @@ int chebyshev::TimeEvolvedProjectedOperator(SparseMatrixType &OP, SparseMatrixTy
 		auto PhiL =gen.State();
 		 
 		//Multiply right operator its operator
-		OPL.Multiply(PhiR,PhiL); //Defines <Phi| OPL
+		OP.Multiply(PhiR,PhiL); //Defines <Phi| OPL
 		OPPRJ.Multiply(PhiL, PhiL);
 		
 		//Evolve state vector from t=0 to Tmax
@@ -265,7 +265,7 @@ int chebyshev::TimeEvolvedProjectedOperator(SparseMatrixType &OP, SparseMatrixTy
 			const auto n = chebMoms.CurrentTimeStep();
 
 			//Set the evolved vector as initial vector of the chebyshev iterations
-			chebMoms.SetInitVectors( OPR , PhiR );
+			chebMoms.SetInitVectors( OPPRJ , PhiR );
 
 			for(int m = 0 ; m < NumMoms ; m++ )
 			{
