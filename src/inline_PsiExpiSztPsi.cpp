@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     vector<int> Sz_colrowidx = {0, 1};
     vector<complex<double>> Sz_data = {-1.0*Jex, 1.0*Jex};
     Sz.ConvertFromCOO(Sz_colrowidx, Sz_colrowidx, Sz_data);
-    spectral_bounds = {-1.0*0.1, 1.0*0.1};
+    spectral_bounds = Sz_data;
   }
 
   //CONFIGURE THE CHEBYSHEV MOMENTS
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     PhiL = {1.0, 1.0},
     PhiR = {1.0, 1.0};
 
-  std::string outputName = "PsiExp_miSztw_Psi.dat";
+  std::string outputName = "PsiExpiSztPsi.dat";
   std::ofstream outputfile( outputName.c_str() );
   
   while ( chebMoms.CurrentTimeStep() != chebMoms.MaxTimeStep() )
